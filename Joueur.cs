@@ -4,22 +4,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace SeptFamilles {
     internal class Joueur {
+        public bool IsPlayer {  get; private set; }
+        public string Name {  get; private set; }
+
         private List<Carte> _mainCartes;
         private Dictionary<Familles, int> _familles;
 
-        public Joueur() {
+        public Joueur(string playername = "", bool isPlayer = false) {
             _mainCartes = new List<Carte>();
             _familles = new Dictionary<Familles, int>();
+            Name = playername;
+            IsPlayer = isPlayer;
         }
 
-        public void Piocher(int numCartes) {
-            for (int i = 0; i < numCartes; i++) {
-                _mainCartes.Add(Program.JeuCartes.First());
-                Program.JeuCartes.Remove(Program.JeuCartes.First());
-            }
+        public void PiocherCartes(int numCartes) {
+            _mainCartes.AddRange(Pioche.Piocher(numCartes));
 
             EvaluerCartes();
         }
@@ -51,6 +54,8 @@ namespace SeptFamilles {
         }
 
         public void DevoilerCartes() {
+            Console.WriteLine("Voici les cartes !\n");
+
             foreach (Carte carte in _mainCartes) {
                 if (carte != null) {
                     carte.MontreNom();
@@ -58,10 +63,15 @@ namespace SeptFamilles {
             }
         }
 
+        public bool CarteEstDansLaMain(Carte carte) {
+
+            return _mainCartes.Contains(carte);
+        }
+
         public void DebugEvaluation() {
             Console.WriteLine("\nIci ma réflexion !\n");
-            var asString = string.Join(Environment.NewLine, _familles);
-            Console.WriteLine(asString);
+            var dictString = string.Join(Environment.NewLine, _familles);
+            Console.WriteLine(dictString);
             var premierChoix = _familles.First();
             Console.WriteLine($"\nJe vais demander une carte de la famille: {premierChoix.Key.ToString()}");
         }

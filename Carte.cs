@@ -31,8 +31,8 @@ namespace SeptFamilles {
             Familles.Ninja => ConsoleColor.DarkGray,
             Familles.Pirate => ConsoleColor.Magenta,
             Familles.Slime => ConsoleColor.Green,
-            Familles.LoupGarou => ConsoleColor.DarkRed,
-            Familles.RatMutante => ConsoleColor.DarkYellow,
+            Familles.Loupgarou => ConsoleColor.DarkRed,
+            Familles.Rat => ConsoleColor.DarkYellow,
             Familles.Avocat => ConsoleColor.Red,
         };
 
@@ -43,5 +43,42 @@ namespace SeptFamilles {
 
             return false;
         }
+
+        public static Carte? IdentifierCarte(string stringValue) {
+            string[] elementsString = stringValue.Split(' ');
+
+            string possibleMembre = Char.ToUpperInvariant(elementsString[0][0]) + elementsString[0].Substring(1);
+            string possibleFamille = Char.ToUpperInvariant(elementsString[1][0]) + elementsString[1].Substring(1);
+
+            bool familleExiste = Enum.TryParse(possibleMembre, out Membres membre);
+            bool membreExiste = Enum.TryParse(possibleFamille, out Familles famille);
+
+            if (membreExiste && familleExiste) {
+                return new Carte(membre, famille);
+            } else {
+                return null;
+            }
+        }
+    }
+
+    public enum Membres {
+        Fils,
+        Fille,
+        Pere,
+        Mere,
+        Grandpere,
+        Grandmere
+    }
+
+    public enum Familles {
+        Zombie,
+        Ninja,
+        Pirate,
+        Slime,
+        Loupgarou,
+        Rat,
+        Avocat
     }
 }
+
+//lines = ['┌─────────┐'] + ['│░░░░░░░░░│'] * 7 + ['└─────────┘']
