@@ -7,33 +7,43 @@ using System.Threading.Tasks;
 namespace SeptFamilles {
     internal class InputHandler {
 
-        public static int DemandeJoueur() {
+        private ScreenHandler screen = new ScreenHandler();
+
+        public int DemandeJoueur() {
             int? joueurChoisi = -1;
             while (joueurChoisi == null || joueurChoisi <= 0 || joueurChoisi > GameLoop.JoueursIA.Count()) {
-                Console.WriteLine("\nÀ quel joueur tu veux demander une carte ?\n");
+                screen.ClearZone(screen.positionInput.X, screen.positionInput.Y, 100, 10);
+                screen.InputCursor();
+                Console.WriteLine("À quel joueur tu veux demander une carte ?");
                 try {
                     joueurChoisi = Int32.Parse(Console.ReadLine());
+                    if (joueurChoisi == null || joueurChoisi <= 0 || joueurChoisi > GameLoop.JoueursIA.Count()) {
+                        Joueur.Say("Ce joueur n'existe pas.");
+                    }
                 } catch (Exception e) {
-                    Console.WriteLine("\nJe n'ai pas compris.\n");
+                    Joueur.Say("Je n'ai pas compris.");
                 }
             }
 
             return (int)joueurChoisi - 1;
         }
 
-        public static Carte DemandeCarte() {
+        public Carte DemandeCarte() {
             Carte carteIdentifiee = null;
             while (carteIdentifiee == null) {
-                Console.WriteLine($"\nJoueur : Quelle carte tu veux vérifier dans ma main ?\n");
+                screen.ClearZone(screen.positionInput.X, screen.positionInput.Y, 100, 10);
+                screen.InputCursor();
+                Console.WriteLine($"Quelle carte tu veux vérifier dans la main de ce joueur ?");
+                
                 string demandeCarte = Console.ReadLine();
                 try {
                     carteIdentifiee = Carte.IdentifierCarte(demandeCarte);
                 } catch (Exception e) {
-                    Console.WriteLine("\nJe n'ai pas compris.\n");
+                    Joueur.Say("Je n'ai pas compris");
                 }
 
                 if (carteIdentifiee == null)
-                    Console.WriteLine("\nJe n'ai pas compris.\n");
+                    Joueur.Say("Je n'ai pas compris");
             }
 
             return carteIdentifiee;

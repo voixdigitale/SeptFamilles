@@ -14,6 +14,8 @@ namespace SeptFamilles {
         private List<Carte> _mainCartes;
         private Dictionary<Familles, int> _familles;
 
+        private static ScreenHandler screen = new ScreenHandler();
+
         public Joueur(string playername = "", bool isPlayer = false) {
             _mainCartes = new List<Carte>();
             _familles = new Dictionary<Familles, int>();
@@ -28,8 +30,9 @@ namespace SeptFamilles {
         }
 
         public void EvaluerCartes() {
+            _familles.Clear();
             //Pour chaque famille
-            foreach(Familles famille in Enum.GetValues(typeof(Familles))) {
+            foreach (Familles famille in Enum.GetValues(typeof(Familles))) {
                 int numMembres = 0;
 
                 //On compte combien de cartes on a de cette famille
@@ -54,18 +57,20 @@ namespace SeptFamilles {
         }
 
         public void DevoilerCartes() {
-            Console.WriteLine("Voici les cartes !\n");
-
-            foreach (Carte carte in _mainCartes) {
-                if (carte != null) {
-                    carte.MontreNom();
-                }
-            }
+            screen.DessinerCartes(_mainCartes);
         }
 
         public bool CarteEstDansLaMain(Carte carte) {
-
             return _mainCartes.Contains(carte);
+        }
+
+        public void RecevoirCarte(Carte carte) {
+            _mainCartes.Add(carte);
+        }
+
+        public void DonnerCarteAuJoueur(Carte carte, Joueur joueur) {
+            joueur.RecevoirCarte(carte);
+            _mainCartes.Remove(carte);
         }
 
         public void DebugEvaluation() {
@@ -74,6 +79,11 @@ namespace SeptFamilles {
             Console.WriteLine(dictString);
             var premierChoix = _familles.First();
             Console.WriteLine($"\nJe vais demander une carte de la famille: {premierChoix.Key.ToString()}");
+        }
+
+        public static void Say(string dialog) {
+            screen.ClearZone(screen.positionPlayerChat.X, screen.positionPlayerChat.Y, 100, 1);
+            screen.LineTypeWriter(screen.positionPlayerChat.X, screen.positionPlayerChat.Y, dialog, ConsoleColor.Gray, 1, 3);
         }
     }
 }
