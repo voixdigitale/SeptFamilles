@@ -19,14 +19,7 @@ namespace SeptFamilles {
             return Membre.ToString() + " " + Famille.ToString();
         }
 
-        public void MontreNom() {
-            ConsoleColor originalFG = Console.ForegroundColor;
-            Console.ForegroundColor = CouleurFamille(Famille);
-            Console.WriteLine(NomCarte());
-            Console.ForegroundColor = originalFG;
-        }
-
-        private ConsoleColor CouleurFamille(Familles famille) => famille switch {
+        public ConsoleColor CouleurFamille(Familles famille) => famille switch {
             Familles.Zombie => ConsoleColor.DarkGreen,
             Familles.Ninja => ConsoleColor.DarkGray,
             Familles.Pirate => ConsoleColor.Magenta,

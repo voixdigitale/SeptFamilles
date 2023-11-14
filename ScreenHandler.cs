@@ -7,13 +7,49 @@ using System.Threading.Tasks;
 namespace SeptFamilles {
     internal class ScreenHandler {
 
-        public ScreenPosition positionCartes = new ScreenPosition(0, 0);
-        public ScreenPosition positionInput = new ScreenPosition(0, 14);
-        public ScreenPosition positionPlayerChat = new ScreenPosition(0, 12);
+        public ScreenPosition positionCartes = new ScreenPosition(80, 4);
+        public ScreenPosition positionInput = new ScreenPosition(0, 7);
+        public ScreenPosition positionPlayerChat = new ScreenPosition(0, 4);
         public ConsoleColor originalFG = Console.ForegroundColor;
 
         public void Clear() {
             Console.Clear();
+
+            CouleurTourActif(0);
+            Console.Write("/------------/");
+
+            for (int i = 0; i < GameLoop.NumJoueursIA; i++) {
+                CouleurTourActif(i + 1);
+                Console.Write("     /------------/");
+            }
+            Console.Write("\n");
+
+            CouleurTourActif(0);
+            Console.Write("|   Joueur   |");
+
+            for (int i = 0; i < GameLoop.NumJoueursIA; i++) {
+                CouleurTourActif(i + 1);
+                Console.Write($"     |    IA {i+1}    |");
+            }
+            Console.Write("\n");
+
+            CouleurTourActif(0);
+            Console.Write("/------------/");
+
+            for (int i = 0; i < GameLoop.NumJoueursIA; i++) {
+                CouleurTourActif(i + 1);
+                Console.Write("     /------------/");
+            }
+            Console.Write("\n");
+
+        }
+
+        private void CouleurTourActif(int numJoueur) {
+            if (GameLoop.Tour == numJoueur) {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+            } else {
+                Console.ForegroundColor = originalFG;
+            }
         }
 
         public void ClearZone(int x, int y, int width, int height) {
@@ -33,6 +69,7 @@ namespace SeptFamilles {
         }
 
         public void InputCursor() {
+            Console.ForegroundColor = originalFG;
             Console.SetCursorPosition(positionInput.X, positionInput.Y);
         }
 
@@ -61,14 +98,27 @@ namespace SeptFamilles {
         }
 
         public void DessinerCartes(List<Carte> mainCartes) {
-            Console.Clear();
-            Console.WriteLine("Voici les cartes !\n");
+            Clear();
+
+            int curPosY = positionCartes.Y;
+            Console.SetCursorPosition(positionCartes.X, curPosY);
+            Console.Write("Voici les cartes !");
+            curPosY += 2;
 
             foreach (Carte carte in mainCartes) {
                 if (carte != null) {
-                    carte.MontreNom();
+                    Console.SetCursorPosition(positionCartes.X, curPosY);
+                    MontreNomCarte(carte);
+                    curPosY++;
                 }
             }
+        }
+
+        public void MontreNomCarte(Carte carte) {
+            ConsoleColor originalFG = Console.ForegroundColor;
+            Console.ForegroundColor = carte.CouleurFamille(carte.Famille);
+            Console.Write(carte.NomCarte());
+            Console.ForegroundColor = originalFG;
         }
     }
 

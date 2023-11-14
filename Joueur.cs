@@ -29,22 +29,8 @@ namespace SeptFamilles {
             EvaluerCartes();
         }
 
-        public void EvaluerCartes() {
-            _familles.Clear();
-            //Pour chaque famille
-            foreach (Familles famille in Enum.GetValues(typeof(Familles))) {
-                int numMembres = 0;
-
-                //On compte combien de cartes on a de cette famille
-                foreach(Carte carte in _mainCartes) {
-                    if(carte.Famille == famille) {
-                        numMembres++;
-                    }
-                }
-
-                //Et on mémorise
-                _familles.Add(famille, numMembres);
-            }
+        public Carte EvaluerCartes() {
+            _familles = CompteFamilles();
 
             //On va les ranger pour lisibilité
             var listeFamilles = _familles.OrderByDescending(x => x.Value).ToList();
@@ -54,6 +40,46 @@ namespace SeptFamilles {
                 _familles.Add(famille.Key, famille.Value);
             }
 
+            //On choisit la famille avec le plus de cartes
+            Familles premierChoixFamille = _familles.First().Key;
+
+
+            List<Membres> _membres = new List<Membres>();
+
+            //On parcourt la main pour voir quelles membres on a de cette famille
+            foreach (Carte carte in _mainCartes) {
+                if (carte.Famille == premierChoixFamille) {
+                    _membres.Add(carte.Membre);
+                }
+            }
+
+            List<Membres> membresManquants = new List<Membres>();
+            //Attention au monstre: On convertit Membres en une liste et on fait la difference avec les membres déjà en main
+            membresManquants = Enum.GetValues(typeof(Membres)).Cast<Membres>().ToList().Except(_membres).ToList();
+
+            Random rand = new Random();
+
+            return new Carte(membresManquants[rand.Next(0, membresManquants.Count)], premierChoixFamille);
+        }
+
+        public Dictionary<Familles, int> CompteFamilles() {
+            _familles.Clear();
+            //Pour chaque famille
+            foreach (Familles famille in Enum.GetValues(typeof(Familles))) {
+                int numMembres = 0;
+
+                //On compte combien de cartes on a de cette famille
+                foreach (Carte carte in _mainCartes) {
+                    if (carte.Famille == famille) {
+                        numMembres++;
+                    }
+                }
+
+                //Et on mémorise
+                _familles.Add(famille, numMembres);
+            }
+
+            return _familles;
         }
 
         public void DevoilerCartes() {
@@ -82,8 +108,8 @@ namespace SeptFamilles {
         }
 
         public static void Say(string dialog) {
-            screen.ClearZone(screen.positionPlayerChat.X, screen.positionPlayerChat.Y, 100, 1);
-            screen.LineTypeWriter(screen.positionPlayerChat.X, screen.positionPlayerChat.Y, dialog, ConsoleColor.Gray, 1, 3);
+            screen.ClearZone(screen.positionPlayerChat.X, screen.positionPlayerChat.Y, 60, 1);
+            screen.LineTypeWriter(screen.positionPlayerChat.X, screen.positionPlayerChat.Y, dialog, ConsoleColor.Blue, 1, 3);
         }
     }
 }
